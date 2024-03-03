@@ -19,4 +19,5 @@ RUN dotnet publish "Test.csproj" -c Release -o /app/publish /p:UseAppHost=false
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
+COPY API_Imitation/Data ./Data
 ENTRYPOINT ["dotnet", "Test.dll"]

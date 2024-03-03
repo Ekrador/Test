@@ -11,7 +11,7 @@ namespace API_Imitation
     {
         public async Task<string> Get()
         {
-            var json = File.ReadAllText("./API_Imitation/Data/Tags.txt");
+            var json = File.ReadAllText("./Data/Tags.txt");
             return json;
         }
     }
