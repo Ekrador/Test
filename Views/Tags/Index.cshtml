@@ -1,0 +1,86 @@
+﻿@model Test.Models.TagModel
+
+@{
+    ViewData["Title"] = "Tags";
+}
+
+<div class="d-flex justify-content">
+    <h3>Tags</h3>
+    <button id="show-table-btn" type="button" class="btn btn-secondary" style="margin-left: 20px">Показать таблицу</button>
+</div>
+
+<div id="data-container" class="col-md-8" style="display:none;">
+    <table id="data-table" class="table table-borderless table-hover">
+        <thead>
+            <tr class="lined-row">
+                <th>
+                    Дата
+                    <button class="sort-btn" style="font-size:10px" data-sort="date" data-order="desc">&#9660;</button>
+                </th>
+                <th>
+                    Описание
+                </th>
+                <th>
+                    Количество
+                </th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+</div>
+
+<div id="pagination" style="display:none">
+    <button class="btn btn-outline-secondary" id="prev-btn"><</button>
+    <span id="page-number"></span>
+    <button class="btn btn-outline-secondary" id="next-btn">></button>
+</div>
+
+@section scripts {
+    <script src="/js/showTable.js"></script>
+    <script src="/js/pagination.js"></script>
+    <script src="/js/sort.js"></script>
+    <script>
+        var data = @Html.Raw(Json.Serialize(Model.Records)); // Получение данных из модели, переданных из контроллера
+        var currentPage = 1;
+        var itemsPerPage = 7;
+        function displayData(page) {
+            $("#data-table tbody").empty();
+            var startIndex = (page - 1) * itemsPerPage;
+            var endIndex = startIndex + itemsPerPage;
+            var keys = Object.keys(data);
+            var pageKeys = keys.slice(startIndex, endIndex);
+            // Отобразить данные на странице
+            pageKeys.forEach(function (dateKey) {
+                var rowData = data[dateKey];
+                Object.keys(rowData).forEach(function (key) {
+                    var row = "<tr>";
+                    if (key === Object.keys(rowData)[0]) {
+                        row += "<td>" + dateKey + "</td>";
+                        row += "</tr>";
+                    }
+                    $("#data-table tbody").append(row);
+                    row = "<tr class=\"lined-row\">";
+                    row = "<td></td>";
+                    row += "<td>" + key + "</td>";
+                    row += "<td>" + rowData[key] + "</td>";
+                    row += "</tr>";
+                    $("#data-table tbody").append(row);
+                });
+            });
+            var totalPages = Math.ceil(Object.keys(data).length / itemsPerPage);
+            $("#page-number").text("Страница " + page);
+            if (currentPage > 1) {
+                $("#prev-btn").show();
+            }
+            else {
+                $("#prev-btn").hide();
+            }
+            if (currentPage < totalPages) {
+                $("#next-btn").show();
+            }
+            else {
+                $("#next-btn").hide();
+            }
+        }
+    </script>
+}
